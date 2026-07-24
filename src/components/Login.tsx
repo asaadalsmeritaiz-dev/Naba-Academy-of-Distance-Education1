@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { GraduationCap, Lock, User, Key, AlertCircle, CheckCircle, RefreshCw, Eye, EyeOff } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface LoginProps {
   onLoginSuccess: (user: any) => void;
 }
 
 export default function Login({ onLoginSuccess }: LoginProps) {
+  const { t, toggleLanguage, language, isRtl } = useLanguage();
   const [universityId, setUniversityId] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -23,7 +25,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!universityId || !password) {
-      setError('يرجى إدخال الرقم الأكاديمي وكلمة المرور');
+      setError(t('login_required'));
       return;
     }
 
@@ -40,7 +42,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        setError(data.error || 'فشل تسجيل الدخول. يرجى التحقق من المدخلات');
+        setError(data.error || t('login_error'));
       } else {
         onLoginSuccess(data.user);
       }
@@ -72,7 +74,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
           email: 'sara@naba.edu'
         });
       } else {
-        setError('خطأ في الاتصال بالخادم. يرجى المحاولة لاحقاً أو التأكد من بيانات الدخول التجريبية.');
+        setError(t('login_error'));
       }
     } finally {
       setIsLoading(false);
@@ -119,7 +121,16 @@ export default function Login({ onLoginSuccess }: LoginProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50/70 p-4 md:p-8" dir="rtl" id="login-viewport">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50/70 p-4 md:p-8 relative" dir={isRtl ? 'rtl' : 'ltr'} id="login-viewport">
+      {/* Floating Language Switcher */}
+      <button
+        type="button"
+        onClick={toggleLanguage}
+        className="absolute top-4 left-4 md:top-8 md:left-8 px-4.5 py-2 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200/80 rounded-2xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 z-50 cursor-pointer"
+      >
+        <span>{t('lang_toggle')}</span>
+      </button>
+
       <div className="max-w-md w-full bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden relative" id="login-container">
         
         {/* Brand Banner */}
@@ -128,8 +139,8 @@ export default function Login({ onLoginSuccess }: LoginProps) {
           <div className="p-3.5 bg-white/10 w-max mx-auto rounded-2xl backdrop-blur-md border border-white/10 mb-4 shadow-inner flex items-center justify-center">
             <GraduationCap className="h-8 w-8 text-white" />
           </div>
-          <h2 className="text-2xl font-extrabold tracking-tight">أكاديمية نبا للتعليم عن بعد</h2>
-          <p className="text-sm font-semibold text-slate-200/90 mt-1" dir="ltr">Naba Academy for Distance Education</p>
+          <h2 className="text-2xl font-extrabold tracking-tight">{t('title')}</h2>
+          <p className="text-sm font-semibold text-slate-200/90 mt-1" dir="ltr">{t('subtitle')}</p>
         </div>
 
         {/* Form Body */}
@@ -144,17 +155,17 @@ export default function Login({ onLoginSuccess }: LoginProps) {
 
             {/* University ID Field */}
             <div className="space-y-1.5">
-              <label className="text-xs text-slate-500 font-bold block">الرقم الأكاديمي / المعرف</label>
+              <label className="text-xs text-slate-500 font-bold block">{t('academic_id')}</label>
               <div className="relative">
-                <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-400">
+                <div className={`absolute inset-y-0 ${isRtl ? 'right-0 pr-3.5' : 'left-0 pl-3.5'} flex items-center pointer-events-none text-slate-400`}>
                   <User className="h-4.5 w-4.5" />
                 </div>
                 <input
                   type="text"
-                  placeholder="مثال: 202600001"
+                  placeholder={t('academic_id_placeholder')}
                   value={universityId}
                   onChange={(e) => setUniversityId(e.target.value)}
-                  className="w-full pr-10 pl-4 py-3 bg-slate-50/50 border border-slate-200/80 rounded-2xl text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-slate-800 focus:bg-white transition-all shadow-sm"
+                  className={`w-full ${isRtl ? 'pr-10 pl-4' : 'pl-10 pr-4'} py-3 bg-slate-50/50 border border-slate-200/80 rounded-2xl text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-slate-800 focus:bg-white transition-all shadow-sm`}
                   id="login-university-id-input"
                 />
               </div>
@@ -162,23 +173,23 @@ export default function Login({ onLoginSuccess }: LoginProps) {
 
             {/* Password Field */}
             <div className="space-y-1.5">
-              <label className="text-xs text-slate-500 font-bold block">كلمة المرور</label>
+              <label className="text-xs text-slate-500 font-bold block">{t('password')}</label>
               <div className="relative">
-                <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-400">
+                <div className={`absolute inset-y-0 ${isRtl ? 'right-0 pr-3.5' : 'left-0 pl-3.5'} flex items-center pointer-events-none text-slate-400`}>
                   <Lock className="h-4.5 w-4.5" />
                 </div>
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="أدخل كلمة المرور الخاصة بك"
+                  placeholder={t('password_placeholder')}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pr-10 pl-10 py-3 bg-slate-50/50 border border-slate-200/80 rounded-2xl text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-slate-800 focus:bg-white transition-all shadow-sm"
+                  className={`w-full ${isRtl ? 'pr-10 pl-10' : 'pl-10 pr-10'} py-3 bg-slate-50/50 border border-slate-200/80 rounded-2xl text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-slate-800 focus:bg-white transition-all shadow-sm`}
                   id="login-password-input"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
+                  className={`absolute inset-y-0 ${isRtl ? 'left-0 pl-3' : 'right-0 pr-3'} flex items-center text-slate-400 hover:text-slate-600 transition-colors`}
                 >
                   {showPassword ? <EyeOff className="h-4.5 w-4.5" /> : <Eye className="h-4.5 w-4.5" />}
                 </button>
@@ -195,14 +206,14 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                   className="rounded border-slate-300 text-slate-900 focus:ring-slate-800 h-4 w-4 accent-slate-900 cursor-pointer"
                   id="remember-me-checkbox"
                 />
-                <span className="text-xs text-slate-500 font-bold">تذكرني</span>
+                <span className="text-xs text-slate-500 font-bold">{t('remember_me')}</span>
               </label>
               <button
                 type="button"
                 onClick={() => setShowResetModal(true)}
                 className="text-xs text-slate-600 hover:text-slate-800 font-bold transition-colors"
               >
-                نسيت كلمة المرور؟
+                {t('forgot_password')}
               </button>
             </div>
 
@@ -216,10 +227,10 @@ export default function Login({ onLoginSuccess }: LoginProps) {
               {isLoading ? (
                 <>
                   <RefreshCw className="h-4.5 w-4.5 animate-spin" />
-                  <span>جاري تسجيل الدخول...</span>
+                  <span>{language === 'ar' ? 'جاري تسجيل الدخول...' : 'Signing in...'}</span>
                 </>
               ) : (
-                <span>تسجيل الدخول</span>
+                <span>{t('login')}</span>
               )}
             </button>
           </form>
@@ -232,21 +243,21 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                 onClick={() => fillCredentials('202600001', '202600001@2026')}
                 className="p-2 bg-white border border-slate-100 hover:border-slate-800 rounded-xl text-[11px] font-bold text-slate-600 hover:text-slate-900 transition-all text-center shadow-sm"
               >
-                بوابة الطالب
+                {t('role_student')}
               </button>
               <button
                 type="button"
                 onClick={() => fillCredentials('instructor', 'sara@2026')}
                 className="p-2 bg-white border border-slate-100 hover:border-slate-800 rounded-xl text-[11px] font-bold text-slate-600 hover:text-slate-900 transition-all text-center shadow-sm"
               >
-                عضو التدريس
+                {language === 'ar' ? 'عضو التدريس' : 'Instructor Portal'}
               </button>
               <button
                 type="button"
                 onClick={() => fillCredentials('admin', 'admin@2026')}
                 className="p-2 bg-white border border-slate-100 hover:border-slate-800 rounded-xl text-[11px] font-bold text-slate-600 hover:text-slate-900 transition-all text-center shadow-sm"
               >
-                المدير العام
+                {t('role_admin')}
               </button>
             </div>
           </div>

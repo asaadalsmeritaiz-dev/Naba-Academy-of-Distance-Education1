@@ -37,6 +37,7 @@ import {
   SystemSettings
 } from '../data/mockAdmin';
 import { Course } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 
 interface AdminDashboardProps {
   activeSection: string;
@@ -45,6 +46,7 @@ interface AdminDashboardProps {
 }
 
 export default function AdminDashboard({ activeSection, setActiveSection, globalCourses }: AdminDashboardProps) {
+  const { t, language, isRtl } = useLanguage();
   // --- STATE ---
   const [users, setUsers] = useState<AdminUser[]>(initialUsers);
   const [terms, setTerms] = useState<AcademicTerm[]>(initialTerms);
@@ -367,15 +369,15 @@ export default function AdminDashboard({ activeSection, setActiveSection, global
 
       {/* Page Context Breadcrumb / Location Indicator */}
       <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-bold uppercase tracking-wider bg-white px-4 py-2.5 w-max rounded-xl border border-slate-100 shadow-sm" id="admin-breadcrumb">
-        <span>لوحة التحكم الفنية</span>
+        <span>{t('breadcrumb_admin')}</span>
         <span className="text-slate-300">/</span>
         <span className="text-slate-800">
-          {activeSection === 'admin-dashboard' && 'لوحة الإحصائيات العامة'}
-          {activeSection === 'admin-users' && 'إدارة المستخدمين'}
-          {activeSection === 'admin-terms' && 'إدارة الترمات الأكاديمية'}
-          {activeSection === 'admin-courses' && 'المساقات الأكاديمية العامة'}
-          {activeSection === 'admin-settings' && 'إعدادات النظام'}
-          {activeSection === 'admin-logs' && 'سجلات العمليات الأمنية'}
+          {activeSection === 'admin-dashboard' && (language === 'ar' ? 'لوحة الإحصائيات العامة' : 'General Statistics')}
+          {activeSection === 'admin-users' && (language === 'ar' ? 'إدارة المستخدمين' : 'User Management')}
+          {activeSection === 'admin-terms' && (language === 'ar' ? 'إدارة الترمات الأكاديمية' : 'Manage Academic Terms')}
+          {activeSection === 'admin-courses' && (language === 'ar' ? 'المساقات الأكاديمية العامة' : 'All Academic Courses')}
+          {activeSection === 'admin-settings' && (language === 'ar' ? 'إعدادات النظام' : 'System Settings')}
+          {activeSection === 'admin-logs' && (language === 'ar' ? 'سجلات العمليات الأمنية' : 'Security Operation Logs')}
         </span>
       </div>
 
@@ -386,33 +388,33 @@ export default function AdminDashboard({ activeSection, setActiveSection, global
           {/* Header & Quick actions */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h2 className="text-xl font-black text-slate-900">نظام المراقبة والإدارة الفائقة (Super Admin Cockpit)</h2>
-              <p className="text-xs text-slate-500 font-semibold mt-1">تتبع مستقر لكافة السجلات التعليمية، أمان جلسات المراقبة وتنشيط فصول أكاديمية نبا.</p>
+              <h2 className="text-xl font-black text-slate-900">{language === 'ar' ? 'نظام المراقبة والإدارة الفائقة (Super Admin Cockpit)' : 'Super Admin System Cockpit'}</h2>
+              <p className="text-xs text-slate-500 font-semibold mt-1">{language === 'ar' ? 'تتبع مستقر لكافة السجلات التعليمية، أمان جلسات المراقبة وتنشيط فصول أكاديمية نبا.' : 'Stable tracking of all academic records, exam session proctoring security and term activations.'}</p>
             </div>
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setShowAddTermModal(true)}
-                className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm flex items-center gap-1.5 transition-all"
+                className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm flex items-center gap-1.5 transition-all cursor-pointer"
                 id="quick-add-term"
               >
                 <Plus className="h-4 w-4" />
-                إضافة ترم جديد
+                {language === 'ar' ? 'إضافة ترم جديد' : 'Add New Term'}
               </button>
               <button
                 onClick={handleGenerateReport}
-                className="bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm flex items-center gap-1.5 transition-colors border border-slate-200"
+                className="bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm flex items-center gap-1.5 transition-colors border border-slate-200 cursor-pointer"
                 id="quick-generate-report"
               >
                 <FileText className="h-4 w-4 text-slate-400" />
-                توليد التقرير الأمني العام
+                {language === 'ar' ? 'توليد التقرير الأمني العام' : 'Generate Security Report'}
               </button>
               <button
                 onClick={() => setActiveSection('admin-users')}
-                className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-bold px-4 py-2.5 rounded-xl flex items-center gap-1.5 transition-all shadow-sm"
+                className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-bold px-4 py-2.5 rounded-xl flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
                 id="quick-manage-roles"
               >
                 <Users className="h-4 w-4 text-slate-400" />
-                تعديل الصلاحيات
+                {language === 'ar' ? 'تعديل الصلاحيات' : 'Edit User Roles'}
               </button>
             </div>
           </div>
@@ -421,11 +423,11 @@ export default function AdminDashboard({ activeSection, setActiveSection, global
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" id="admin-kpi-row">
             <div className="bg-white p-5 rounded-2xl border border-slate-150/80 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow duration-300">
               <div className="space-y-1">
-                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">إجمالي الطلاب المقيدين</span>
+                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">{t('stats_students')}</span>
                 <p className="text-2xl font-black text-slate-850">{mockStats.totalStudents}</p>
                 <span className="text-[10px] text-emerald-600 font-extrabold bg-emerald-50 px-2 py-0.5 rounded-full inline-flex items-center gap-0.5">
                   <TrendingUp className="h-3 w-3" />
-                  +١٢٪ نمو سنوي
+                  {language === 'ar' ? '+١٢٪ نمو سنوي' : '+12% annual growth'}
                 </span>
               </div>
               <div className="p-3 bg-slate-50 text-slate-750 rounded-xl border border-slate-100 shadow-inner">
@@ -435,10 +437,10 @@ export default function AdminDashboard({ activeSection, setActiveSection, global
 
             <div className="bg-white p-5 rounded-2xl border border-slate-150/80 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow duration-300">
               <div className="space-y-1">
-                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">أعضاء هيئة التدريس</span>
+                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">{t('stats_instructors')}</span>
                 <p className="text-2xl font-black text-slate-850">{mockStats.totalInstructors}</p>
                 <span className="text-[10px] text-emerald-600 font-extrabold bg-emerald-50 px-2 py-0.5 rounded-full block w-max">
-                  +٣ انضموا هذا الشهر
+                  {language === 'ar' ? '+٣ انضموا هذا الشهر' : '+3 joined this month'}
                 </span>
               </div>
               <div className="p-3 bg-slate-50 text-slate-750 rounded-xl border border-slate-100 shadow-inner">
@@ -448,9 +450,9 @@ export default function AdminDashboard({ activeSection, setActiveSection, global
 
             <div className="bg-white p-5 rounded-2xl border border-slate-150/80 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow duration-300">
               <div className="space-y-1">
-                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">المقررات والمساقات</span>
+                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">{t('stats_courses')}</span>
                 <p className="text-2xl font-black text-slate-850">{mockStats.totalCourses}</p>
-                <span className="text-[10px] text-slate-450 font-medium block">موزعة عبر جميع الفصول</span>
+                <span className="text-[10px] text-slate-450 font-medium block">{language === 'ar' ? 'موزعة عبر جميع الفصول' : 'Distributed across all terms'}</span>
               </div>
               <div className="p-3 bg-slate-50 text-slate-750 rounded-xl border border-slate-100 shadow-inner">
                 <BookOpen className="h-5 w-5" />
@@ -459,13 +461,13 @@ export default function AdminDashboard({ activeSection, setActiveSection, global
 
             <div className="bg-rose-50/40 p-5 rounded-2xl border border-rose-100 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow duration-300">
               <div className="space-y-1">
-                <span className="text-[10px] font-extrabold text-rose-600 uppercase tracking-wider block">اختبارات مباشرة الآن</span>
+                <span className="text-[10px] font-extrabold text-rose-600 uppercase tracking-wider block">{t('stats_exams')}</span>
                 <p className="text-2xl font-black text-rose-650 flex items-center gap-2">
                   {mockStats.activeExams}
                   <span className="h-2.5 w-2.5 bg-rose-500 rounded-full animate-ping"></span>
                 </p>
                 <span className="text-[10px] text-rose-600 font-extrabold bg-rose-50 px-2 py-0.5 rounded-full block w-max">
-                  مراقبة حية نشطة للكاميرات
+                  {language === 'ar' ? 'مراقبة حية نشطة للكاميرات' : 'Active live camera proctoring'}
                 </span>
               </div>
               <div className="p-3 bg-rose-50 text-rose-650 rounded-xl border border-rose-100 shadow-inner">
