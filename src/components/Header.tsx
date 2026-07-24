@@ -62,7 +62,7 @@ export default function Header({
       {/* Role Switcher & User Profile Controls */}
       <div className="flex items-center gap-4">
         {/* Role Toggle Switch */}
-        {currentUser.role !== 'student' && (
+        {currentUser.role === 'admin' && (
           <div className="hidden md:flex items-center bg-slate-850 p-1 rounded-xl border border-slate-800">
             <button
               onClick={() => onRoleChange('student')}
@@ -87,20 +87,18 @@ export default function Header({
               <ShieldAlert className="h-4 w-4 text-amber-500" />
               {language === 'ar' ? 'لوحة المراقب' : 'Instructor'}
             </button>
-            {currentUser.role === 'admin' && (
-              <button
-                onClick={() => onRoleChange('admin')}
-                className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-1.5 ${
-                  currentRole === 'admin'
-                    ? 'bg-slate-900 text-white shadow-sm border border-slate-750'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-                id="role-admin-btn"
-              >
-                <Settings className="h-4 w-4 text-slate-400" />
-                {t('role_admin')}
-              </button>
-            )}
+            <button
+              onClick={() => onRoleChange('admin')}
+              className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-1.5 ${
+                currentRole === 'admin'
+                  ? 'bg-slate-900 text-white shadow-sm border border-slate-750'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+              id="role-admin-btn"
+            >
+              <Settings className="h-4 w-4 text-slate-400" />
+              {t('role_admin')}
+            </button>
           </div>
         )}
 
