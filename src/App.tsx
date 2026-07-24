@@ -76,6 +76,14 @@ export default function App() {
   } : mockUsers[0];
 
   const handleRoleChange = (role: 'student' | 'instructor' | 'admin') => {
+    // Security Guard: Prevent unauthorized role switching
+    if (role === 'admin' && currentUser.role !== 'admin') {
+      return;
+    }
+    if (role === 'instructor' && currentUser.role === 'student') {
+      return;
+    }
+
     setCurrentRole(role);
     setSelectedCourseId(null);
     if (role === 'student') {
@@ -186,7 +194,7 @@ export default function App() {
             )}
 
             {/* Instructor Portal Navigation Routing */}
-            {currentRole === 'instructor' && (
+            {currentRole === 'instructor' && (currentUser.role === 'instructor' || currentUser.role === 'admin') && (
               <>
                 {activeTab === 'proctor-dashboard' && (
                   <ProctorDashboard mode="proctor" />
@@ -213,7 +221,7 @@ export default function App() {
             )}
 
             {/* Admin Portal Navigation Routing */}
-            {currentRole === 'admin' && activeTab !== 'profile' && (
+            {currentRole === 'admin' && currentUser.role === 'admin' && activeTab !== 'profile' && (
               <AdminDashboard 
                 activeSection={activeTab} 
                 setActiveSection={setActiveTab}
