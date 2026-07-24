@@ -244,12 +244,7 @@ export default function App() {
       {authenticatedUser.is_first_login && (
         <ChangePasswordModal
           universityId={authenticatedUser.university_id}
-          onSuccess={() => {
-            setAuthenticatedUser(prev => ({
-              ...prev,
-              is_first_login: false
-            }));
-          }}
+          onSuccess={handleLogout}
         />
       )}
     </div>

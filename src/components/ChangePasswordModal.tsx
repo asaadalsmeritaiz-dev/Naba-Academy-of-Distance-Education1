@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Lock, AlertCircle, CheckCircle, RefreshCw, Eye, EyeOff } from 'lucide-react';
+import { Lock, AlertCircle, CheckCircle, RefreshCw } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface ChangePasswordModalProps {
   universityId: string;
@@ -7,6 +8,7 @@ interface ChangePasswordModalProps {
 }
 
 export default function ChangePasswordModal({ universityId, onSuccess }: ChangePasswordModalProps) {
+  const { language, isRtl } = useLanguage();
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -21,17 +23,17 @@ export default function ChangePasswordModal({ universityId, onSuccess }: ChangeP
     setSuccess(null);
 
     if (!oldPassword || !newPassword || !confirmPassword) {
-      setError('يرجى تعبئة جميع الحقول المطلوبة لتحديث كلمة المرور');
+      setError(language === 'ar' ? 'يرجى تعبئة جميع الحقول المطلوبة لتحديث كلمة المرور' : 'Please fill in all fields to update your password');
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setError('كلمة المرور الجديدة غير مطابقة لتأكيد كلمة المرور');
+      setError(language === 'ar' ? 'كلمة المرور الجديدة غير مطابقة لتأكيد كلمة المرور' : 'New passwords do not match');
       return;
     }
 
     if (newPassword.length < 6) {
-      setError('يجب أن تحتوي كلمة المرور الجديدة على ٦ خانات على الأقل لضمان الأمان');
+      setError(language === 'ar' ? 'يجب أن تحتوي كلمة المرور الجديدة على ٦ خانات على الأقل لضمان الأمان' : 'New password must be at least 6 characters for safety');
       return;
     }
 
@@ -51,23 +53,23 @@ export default function ChangePasswordModal({ universityId, onSuccess }: ChangeP
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        setError(data.error || 'فشل تحديث كلمة المرور. يرجى التحقق من كلمة المرور القديمة');
+        setError(data.error || (language === 'ar' ? 'فشل تحديث كلمة المرور. يرجى التحقق من كلمة المرور القديمة' : 'Failed to update password. Please check the old password'));
       } else {
-        setSuccess('تم تحديث كلمة المرور الخاصة بك بنجاح! سيتم توجيهك للوحة التحكم الآن.');
+        setSuccess(language === 'ar' ? 'تم تحديث كلمة المرور بنجاح! يرجى تسجيل الدخول مجدداً بكلمة المرور الجديدة لتأكيد حسابك.' : 'Password updated successfully! Please log in again with your new password to confirm your account.');
         setTimeout(() => {
           onSuccess();
-        }, 2000);
+        }, 3000);
       }
     } catch (err) {
       console.error('Password change failed:', err);
-      setError('خطأ في الاتصال بالخادم. يرجى المحاولة لاحقاً');
+      setError(language === 'ar' ? 'خطأ في الاتصال بالخادم. يرجى المحاولة لاحقاً' : 'Server connection error. Please try again later');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 z-[9999]" dir="rtl" id="change-password-modal-container">
+    <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 z-[9999]" dir={isRtl ? 'rtl' : 'ltr'} id="change-password-modal-container">
       <div className="bg-white rounded-3xl border border-slate-100 max-w-md w-full shadow-2xl overflow-hidden p-8 space-y-6 animate-in zoom-in-95 duration-200">
         
         {/* Modal Header */}
@@ -75,9 +77,13 @@ export default function ChangePasswordModal({ universityId, onSuccess }: ChangeP
           <div className="p-3.5 bg-slate-100 text-slate-800 rounded-2xl w-max mx-auto border border-slate-200 shadow-inner">
             <Lock className="h-6 w-6" />
           </div>
-          <h3 className="text-lg font-extrabold text-slate-800">تحديث كلمة المرور الإلزامية</h3>
+          <h3 className="text-lg font-extrabold text-slate-800">
+            {language === 'ar' ? 'تحديث كلمة المرور الإلزامية' : 'Mandatory Password Update'}
+          </h3>
           <p className="text-xs text-slate-400 font-semibold leading-relaxed px-2">
-            هذا هو تسجيل دخولك الأول للنظام الأكاديمي. حرصاً على سرية معلوماتك، يرجى استبدال كلمة المرور الافتراضية بكلمة مرور خاصة بك.
+            {language === 'ar' 
+              ? 'هذا هو تسجيل دخولك الأول للنظام الأكاديمي. حرصاً على سرية معلوماتك، يرجى استبدال كلمة المرور الافتراضية بكلمة مرور خاصة بك.' 
+              : 'This is your first login to the academic platform. To secure your account, please replace your temporary default password with a new personal password.'}
           </p>
         </div>
 
@@ -99,10 +105,12 @@ export default function ChangePasswordModal({ universityId, onSuccess }: ChangeP
 
           {/* Old Password Field */}
           <div className="space-y-1">
-            <label className="text-xs text-slate-500 font-bold block">كلمة المرور المؤقتة / الحالية</label>
+            <label className="text-xs text-slate-500 font-bold block">
+              {language === 'ar' ? 'كلمة المرور المؤقتة / الحالية' : 'Temporary / Current Password'}
+            </label>
             <input
               type={showPass ? 'text' : 'password'}
-              placeholder="مثال: CS-2023-8849@2026"
+              placeholder={language === 'ar' ? 'مثال: CS-2023-8849@2026' : 'e.g. CS-2023-8849@2026'}
               value={oldPassword}
               onChange={(e) => setOldPassword(e.target.value)}
               className="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-slate-1000 focus:bg-white transition-all shadow-sm"
@@ -112,10 +120,12 @@ export default function ChangePasswordModal({ universityId, onSuccess }: ChangeP
 
           {/* New Password Field */}
           <div className="space-y-1">
-            <label className="text-xs text-slate-500 font-bold block">كلمة المرور الجديدة</label>
+            <label className="text-xs text-slate-500 font-bold block">
+              {language === 'ar' ? 'كلمة المرور الجديدة' : 'New Password'}
+            </label>
             <input
               type={showPass ? 'text' : 'password'}
-              placeholder="أدخل كلمة المرور الجديدة"
+              placeholder={language === 'ar' ? 'أدخل كلمة المرور الجديدة' : 'Enter your new password'}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               className="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-slate-1000 focus:bg-white transition-all shadow-sm"
@@ -125,10 +135,12 @@ export default function ChangePasswordModal({ universityId, onSuccess }: ChangeP
 
           {/* Confirm Password Field */}
           <div className="space-y-1">
-            <label className="text-xs text-slate-500 font-bold block">تأكيد كلمة المرور الجديدة</label>
+            <label className="text-xs text-slate-500 font-bold block">
+              {language === 'ar' ? 'تأكيد كلمة المرور الجديدة' : 'Confirm New Password'}
+            </label>
             <input
               type={showPass ? 'text' : 'password'}
-              placeholder="أعد إدخال كلمة المرور الجديدة"
+              placeholder={language === 'ar' ? 'أعد إدخال كلمة المرور الجديدة' : 'Re-enter your new password'}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               className="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-slate-1000 focus:bg-white transition-all shadow-sm"
@@ -140,20 +152,24 @@ export default function ChangePasswordModal({ universityId, onSuccess }: ChangeP
           <button
             type="button"
             onClick={() => setShowPass(!showPass)}
-            className="text-[11px] text-slate-800 hover:text-slate-950 font-bold flex items-center gap-1"
+            className="text-[11px] text-slate-800 hover:text-slate-950 font-bold flex items-center gap-1 cursor-pointer"
           >
-            {showPass ? 'إخفاء كلمات المرور' : 'إظهار كلمات المرور'}
+            {language === 'ar' 
+              ? (showPass ? 'إخفاء كلمات المرور' : 'إظهار كلمات المرور') 
+              : (showPass ? 'Hide Passwords' : 'Show Passwords')}
           </button>
 
           {/* Submit Button */}
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-700 text-white rounded-2xl text-xs font-bold transition-all shadow-md shadow-slate-50 flex items-center justify-center gap-2"
+            className="w-full py-3 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-700 text-white rounded-2xl text-xs font-bold transition-all shadow-md shadow-slate-50 flex items-center justify-center gap-2 cursor-pointer"
             id="change-password-submit-btn"
           >
             {isLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : null}
-            <span>تحديث كلمة المرور وتفعيل الحساب الأكاديمي</span>
+            <span>
+              {language === 'ar' ? 'تحديث كلمة المرور وتفعيل الحساب الأكاديمي' : 'Update Password & Activate Account'}
+            </span>
           </button>
         </form>
 
