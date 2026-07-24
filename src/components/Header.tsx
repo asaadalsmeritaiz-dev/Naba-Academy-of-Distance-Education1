@@ -59,48 +59,8 @@ export default function Header({
         </div>
       </div>
 
-      {/* Role Switcher & User Profile Controls */}
+      {/* User Profile Controls */}
       <div className="flex items-center gap-4">
-        {/* Role Toggle Switch */}
-        {currentUser.role === 'admin' && (
-          <div className="hidden md:flex items-center bg-slate-850 p-1 rounded-xl border border-slate-800">
-            <button
-              onClick={() => onRoleChange('student')}
-              className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all ${
-                currentRole === 'student'
-                  ? 'bg-slate-900 text-white shadow-sm border border-slate-750'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-              id="role-student-btn"
-            >
-              {t('role_student')}
-            </button>
-            <button
-              onClick={() => onRoleChange('instructor')}
-              className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-1.5 ${
-                currentRole === 'instructor'
-                  ? 'bg-slate-900 text-white shadow-sm border border-slate-750'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-              id="role-instructor-btn"
-            >
-              <ShieldAlert className="h-4 w-4 text-amber-500" />
-              {language === 'ar' ? 'لوحة المراقب' : 'Instructor'}
-            </button>
-            <button
-              onClick={() => onRoleChange('admin')}
-              className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-1.5 ${
-                currentRole === 'admin'
-                  ? 'bg-slate-900 text-white shadow-sm border border-slate-750'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-              id="role-admin-btn"
-            >
-              <Settings className="h-4 w-4 text-slate-400" />
-              {t('role_admin')}
-            </button>
-          </div>
-        )}
 
         {/* Language Switcher */}
         <button
