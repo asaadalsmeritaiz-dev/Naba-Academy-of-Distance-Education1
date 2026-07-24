@@ -235,32 +235,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
             </button>
           </form>
 
-          {/* Quick Access Helper */}
-          <div className="p-4 bg-slate-50/70 rounded-2xl border border-slate-100/50 space-y-3">
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => fillCredentials('202600001', '202600001@2026')}
-                className="p-2 bg-white border border-slate-100 hover:border-slate-800 rounded-xl text-[11px] font-bold text-slate-600 hover:text-slate-900 transition-all text-center shadow-sm"
-              >
-                {t('role_student')}
-              </button>
-              <button
-                type="button"
-                onClick={() => fillCredentials('instructor', 'sara@2026')}
-                className="p-2 bg-white border border-slate-100 hover:border-slate-800 rounded-xl text-[11px] font-bold text-slate-600 hover:text-slate-900 transition-all text-center shadow-sm"
-              >
-                {language === 'ar' ? 'عضو التدريس' : 'Instructor Portal'}
-              </button>
-              <button
-                type="button"
-                onClick={() => fillCredentials('admin', 'admin@2026')}
-                className="p-2 bg-white border border-slate-100 hover:border-slate-800 rounded-xl text-[11px] font-bold text-slate-600 hover:text-slate-900 transition-all text-center shadow-sm"
-              >
-                {t('role_admin')}
-              </button>
-            </div>
-          </div>
+
         </div>
       </div>
 
