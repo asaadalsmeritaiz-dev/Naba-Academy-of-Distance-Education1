@@ -1,0 +1,9 @@
+{
+  "name": "أكاديمية نبا للتعليم عن بعد",
+  "description": "منصة أكاديمية نبا للتعليم عن بعد المتكاملة، تدعم التعلم الإلكتروني والامتحانات الذكية بمراقبة الذكاء الاصطناعي.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
