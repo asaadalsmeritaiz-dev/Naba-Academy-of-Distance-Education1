@@ -11,6 +11,7 @@ import {
   HelpCircle
 } from 'lucide-react';
 import { Course, Exam } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 
 interface DashboardProps {
   courses: Course[];
@@ -18,6 +19,9 @@ interface DashboardProps {
   onNavigateToCourses: () => void;
   onNavigateToExams: () => void;
   onSelectCourse: (courseId: string) => void;
+  studentName?: string;
+  studentId?: string;
+  studentMajor?: string;
 }
 
 export default function Dashboard({
@@ -25,21 +29,35 @@ export default function Dashboard({
   exams,
   onNavigateToCourses,
   onNavigateToExams,
-  onSelectCourse
+  onSelectCourse,
+  studentName = "طالب جامعي",
+  studentId = "",
+  studentMajor = ""
 }: DashboardProps) {
+  const { language } = useLanguage();
+
   return (
     <div className="space-y-6 animate-in fade-in duration-300" id="student-dashboard-root">
       {/* Dynamic Academic Greeting Panel */}
       <div className="bg-gradient-to-r from-slate-900 via-slate-950 to-slate-950 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl shadow-slate-150" id="academic-greeting-panel">
         <div className="absolute top-0 left-0 w-64 h-64 bg-slate-1000/10 rounded-full blur-3xl -translate-x-12 -translate-y-12"></div>
-        <div className="relative z-10 space-y-2">
+        <div className="relative z-10 space-y-3">
           <span className="text-[10px] bg-slate-1000/30 border border-slate-700/20 text-slate-200 font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">
             بوابة الطالب الذكية
           </span>
-          <h2 className="text-2xl font-black tracking-tight mt-1">أهلاً بك مجدداً، أحمد علي اليماني 👋</h2>
-          <p className="text-xs text-slate-200/90 leading-relaxed font-medium max-w-2xl">
-            مستواك الدراسي متميز هذا الفصل ومعدل الحضور الخاص بك ٩٤٪. واصل الأداء الممتاز لإكمال متطلبات تخرجك لعام ٢٠٢٦ بنجاح!
-          </p>
+          <h2 className="text-2xl font-black tracking-tight mt-1">
+            {language === 'ar' ? 'أهلاً بك مجدداً،' : 'Welcome back,'} {studentName} 👋
+          </h2>
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-slate-350 font-bold pt-2 border-t border-slate-800/40">
+            <div>
+              <span className="text-slate-400">{language === 'ar' ? 'الرقم الأكاديمي: ' : 'Academic ID: '}</span>
+              <span className="font-mono text-slate-200">{studentId}</span>
+            </div>
+            <div>
+              <span className="text-slate-400">{language === 'ar' ? 'التخصص الدراسي: ' : 'Academic Major: '}</span>
+              <span className="text-slate-200">{studentMajor}</span>
+            </div>
+          </div>
         </div>
       </div>
 

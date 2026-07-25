@@ -29,7 +29,7 @@ interface ExamViewProps {
 export default function ExamView({ exams, onExamSubmitted, currentUser }: ExamViewProps) {
   const activeExam = exams[0]; // Take the first exam
   const studentId = currentUser?.studentId || currentUser?.id || "student_1";
-  const studentName = currentUser?.name || "أحمد علي اليماني";
+  const studentName = currentUser?.name || "طالب جامعي";
 
   const [examStarted, setExamStarted] = useState(false);
   const [examCompleted, setExamCompleted] = useState(false);
@@ -189,7 +189,7 @@ export default function ExamView({ exams, onExamSubmitted, currentUser }: ExamVi
       const msg = 'محاولة الخروج من نافذة الامتحان (تبديل التبويب أو التطبيق)';
       triggerProctorWarning(msg);
       if (socketRef.current) {
-        emitViolation(socketRef.current, activeExam.id, studentId, 'tab_switch', msg);
+        emitViolation(socketRef.current, activeExam.id, studentId, 'tab_switch', msg, studentName);
       }
     };
 
@@ -199,7 +199,7 @@ export default function ExamView({ exams, onExamSubmitted, currentUser }: ExamVi
       const msg = 'النقر بـ زر الفأرة الأيمن محظور تماماً داخل بيئة الامتحان';
       triggerProctorWarning(msg);
       if (socketRef.current) {
-        emitViolation(socketRef.current, activeExam.id, studentId, 'right_click', msg);
+        emitViolation(socketRef.current, activeExam.id, studentId, 'right_click', msg, studentName);
       }
     };
 
@@ -209,7 +209,7 @@ export default function ExamView({ exams, onExamSubmitted, currentUser }: ExamVi
       const msg = 'محاولة نسخ الأسئلة أو النصوص محظورة';
       triggerProctorWarning(msg);
       if (socketRef.current) {
-        emitViolation(socketRef.current, activeExam.id, studentId, 'forbidden_copy', msg);
+        emitViolation(socketRef.current, activeExam.id, studentId, 'forbidden_copy', msg, studentName);
       }
     };
 
@@ -218,7 +218,7 @@ export default function ExamView({ exams, onExamSubmitted, currentUser }: ExamVi
       const msg = 'محاولة لصق نصوص خارجية غير مسموح بها';
       triggerProctorWarning(msg);
       if (socketRef.current) {
-        emitViolation(socketRef.current, activeExam.id, studentId, 'forbidden_paste', msg);
+        emitViolation(socketRef.current, activeExam.id, studentId, 'forbidden_paste', msg, studentName);
       }
     };
 
@@ -237,7 +237,7 @@ export default function ExamView({ exams, onExamSubmitted, currentUser }: ExamVi
         const msg = `محاولة استخدام اختصار لوحة المفاتيح (${e.key}) المحظور أمنياً`;
         triggerProctorWarning(msg);
         if (socketRef.current) {
-          emitViolation(socketRef.current, activeExam.id, studentId, 'forbidden_keys', msg);
+          emitViolation(socketRef.current, activeExam.id, studentId, 'forbidden_keys', msg, studentName);
         }
       }
     };

@@ -123,7 +123,7 @@ export default function ProctorDashboard({ mode = 'proctor' }: ProctorDashboardP
       
       const newAlert: ProctorAlert = {
         id: `alert-${Date.now()}`,
-        studentName: data.studentId === 'student_1' ? 'أحمد علي اليماني' : data.studentId,
+        studentName: data.studentName || data.studentId,
         message: data.details || data.type,
         timestamp: new Date(data.timestamp).toLocaleTimeString('ar-EG'),
         severity: 'high',

@@ -69,6 +69,7 @@ export default function AdminDashboard({ activeSection, setActiveSection, global
   const [newStudentRole, setNewStudentRole] = useState<'student' | 'instructor'>('student');
   const [newStudentLoading, setNewStudentLoading] = useState(false);
   const [generatedTempPassword, setGeneratedTempPassword] = useState<string | null>(null);
+  const [registeredUserId, setRegisteredUserId] = useState<string | null>(null);
   const [addStudentError, setAddStudentError] = useState<string | null>(null);
   
   // Term Form State
@@ -104,7 +105,24 @@ export default function AdminDashboard({ activeSection, setActiveSection, global
       if (u.role === 'student') {
         const idStr = u.university_id || '';
         const idNum = parseInt(idStr, 10);
-        if (!isNaN(idNum) && idNum >= 202600001 && idNum < 202700000) {
+        if (!isNaN(idNum) && idNum >= 202600001 && idNum < 202610000) {
+          if (idNum > maxId) {
+            maxId = idNum;
+          }
+        }
+      }
+    });
+    return String(maxId + 1);
+  };
+
+  // Get next incremental instructor ID starting from 202610001
+  const getNextInstructorId = (currentUsers: AdminUser[]) => {
+    let maxId = 202610000;
+    currentUsers.forEach((u) => {
+      if (u.role === 'instructor') {
+        const idStr = u.university_id || '';
+        const idNum = parseInt(idStr, 10);
+        if (!isNaN(idNum) && idNum >= 202610001 && idNum < 202700000) {
           if (idNum > maxId) {
             maxId = idNum;
           }
@@ -147,6 +165,7 @@ export default function AdminDashboard({ activeSection, setActiveSection, global
         setAddStudentError(data.error || (isStudent ? 'حدث خطأ أثناء تسجيل الطالب' : 'حدث خطأ أثناء تسجيل الأستاذ'));
       } else {
         setGeneratedTempPassword(data.temp_password);
+        setRegisteredUserId(newStudentId);
         triggerToast(
           isStudent 
             ? 'تم تسجيل الطالب وتوليد كلمة المرور بنجاح!' 
@@ -1322,7 +1341,11 @@ export default function AdminDashboard({ activeSection, setActiveSection, global
               </div>
               <button
                 type="button"
-                onClick={() => setShowAddStudentModal(false)}
+                onClick={() => {
+                  setShowAddStudentModal(false);
+                  setGeneratedTempPassword(null);
+                  setRegisteredUserId(null);
+                }}
                 className="text-slate-400 hover:text-slate-600 font-bold text-xs"
               >
                 إغلاق
@@ -1345,7 +1368,7 @@ export default function AdminDashboard({ activeSection, setActiveSection, global
                 <div className="p-3 bg-white rounded-xl border border-emerald-100/50 space-y-2">
                   <p className="text-[10px] text-slate-400 font-semibold">بيانات الدخول الأكاديمية (قم بنسخها ومشاركتها مع المستخدم):</p>
                   <div className="space-y-1 text-xs">
-                    <p className="font-bold text-slate-800">الرقم الأكاديمي: <span className="font-mono text-slate-800 select-all font-black">{newStudentId || "المسجل مسبقاً"}</span></p>
+                    <p className="font-bold text-slate-800">الرقم الأكاديمي: <span className="font-mono text-slate-800 select-all font-black">{registeredUserId || "المسجل مسبقاً"}</span></p>
                     <p className="font-bold text-slate-800">كلمة المرور المؤقتة: <span className="font-mono text-emerald-600 select-all font-black">{generatedTempPassword}</span></p>
                   </div>
                 </div>
@@ -1354,6 +1377,7 @@ export default function AdminDashboard({ activeSection, setActiveSection, global
                   onClick={() => {
                     setShowAddStudentModal(false);
                     setGeneratedTempPassword(null);
+                    setRegisteredUserId(null);
                   }}
                   className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition-all"
                 >
@@ -1384,7 +1408,7 @@ export default function AdminDashboard({ activeSection, setActiveSection, global
                       type="button"
                       onClick={() => {
                         setNewStudentRole('instructor');
-                        setNewStudentId(`INS-2026-${Math.floor(1000 + Math.random() * 9000)}`);
+                        setNewStudentId(getNextInstructorId(users));
                       }}
                       className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                         newStudentRole === 'instructor'

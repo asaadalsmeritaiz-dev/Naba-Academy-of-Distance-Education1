@@ -171,6 +171,9 @@ export default function App() {
                     onNavigateToCourses={() => setActiveTab('courses')}
                     onNavigateToExams={() => setActiveTab('exams')}
                     onSelectCourse={handleSelectCourse}
+                    studentName={currentUser.name}
+                    studentId={currentUser.studentId}
+                    studentMajor={currentUser.major}
                   />
                 )}
                 {activeTab === 'courses' && (

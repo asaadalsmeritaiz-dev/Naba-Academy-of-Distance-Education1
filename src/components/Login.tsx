@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { GraduationCap, Lock, User, Key, AlertCircle, CheckCircle, RefreshCw, Eye, EyeOff } from 'lucide-react';
+import { GraduationCap, Lock, User, Key, AlertCircle, CheckCircle, RefreshCw, Eye, EyeOff, BookOpen, Shield } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 interface LoginProps {
@@ -57,14 +57,6 @@ export default function Login({ onLoginSuccess }: LoginProps) {
           university_id: 'admin',
           email: 'admin@naba.edu'
         });
-      } else if (universityId === '202600001' && password === '202600001@2026') {
-        onLoginSuccess({
-          id: 'student1-uuid-virtual',
-          name: 'أحمد محمد العبسي',
-          role: 'student',
-          university_id: '202600001',
-          email: 'ahmed@naba.edu'
-        });
       } else if (universityId === 'instructor' && password === 'sara@2026') {
         onLoginSuccess({
           id: 'instructor1-uuid-virtual',
@@ -119,6 +111,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
     setPassword(pass);
     setError(null);
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50/70 p-4 md:p-8 relative" dir={isRtl ? 'rtl' : 'ltr'} id="login-viewport">
@@ -235,6 +228,30 @@ export default function Login({ onLoginSuccess }: LoginProps) {
             </button>
           </form>
 
+          {/* Quick Access Helper */}
+          <div className="grid grid-cols-3 gap-3 pt-4 border-t border-slate-100/80">
+            <button
+              type="button"
+              onClick={() => fillCredentials('202600001', '202600001@2026')}
+              className="py-2.5 px-2 bg-white border border-slate-200 hover:border-slate-400 rounded-2xl text-[11px] font-extrabold text-slate-600 hover:text-slate-900 transition-all text-center shadow-sm cursor-pointer"
+            >
+              {language === 'ar' ? 'بوابة الطالب' : 'Student Portal'}
+            </button>
+            <button
+              type="button"
+              onClick={() => fillCredentials('instructor', 'sara@2026')}
+              className="py-2.5 px-2 bg-white border border-slate-200 hover:border-slate-400 rounded-2xl text-[11px] font-extrabold text-slate-600 hover:text-slate-900 transition-all text-center shadow-sm cursor-pointer"
+            >
+              {language === 'ar' ? 'عضو التدريس' : 'Faculty Member'}
+            </button>
+            <button
+              type="button"
+              onClick={() => fillCredentials('admin', 'admin@2026')}
+              className="py-2.5 px-2 bg-white border border-slate-200 hover:border-slate-400 rounded-2xl text-[11px] font-extrabold text-slate-600 hover:text-slate-900 transition-all text-center shadow-sm cursor-pointer"
+            >
+              {language === 'ar' ? 'المدير العام' : 'General Manager'}
+            </button>
+          </div>
 
         </div>
       </div>

@@ -33,7 +33,7 @@ export function initSocket(examId: string): Socket {
   return socket;
 }
 
-export function emitViolation(socket: Socket | null, examId: string, studentId: string, type: string, details?: string) {
+export function emitViolation(socket: Socket | null, examId: string, studentId: string, type: string, details?: string, studentName?: string) {
   if (!socket) {
     console.warn("Socket is null, could not emit violation:", type);
     return;
@@ -42,6 +42,7 @@ export function emitViolation(socket: Socket | null, examId: string, studentId: 
   const payload = {
     examId,
     studentId,
+    studentName: studentName || studentId,
     type, // 'tab_switch', 'face_missing', 'multiple_faces', 'right_click', 'forbidden_keys'
     details: details || '',
     timestamp: new Date().toISOString()
