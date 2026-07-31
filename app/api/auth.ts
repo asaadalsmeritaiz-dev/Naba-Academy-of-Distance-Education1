@@ -233,7 +233,7 @@ router.post("/register-university", authenticate, async (req: Request, res: Resp
     // Store in Virtual Users Cache for instant login availability
     virtualUsersCache.set(university_id, newAccount);
 
-    // Also attempt storing in real Supabase db
+    // Also attempt storing in real Supabase db when credentials are available
     const supabase = await createClient(req);
     try {
       await supabase
@@ -250,7 +250,7 @@ router.post("/register-university", authenticate, async (req: Request, res: Resp
           is_first_login: true
         });
     } catch (dbErr) {
-      console.warn("Could not insert user directly into Supabase (probably schema constraint/missing column):", dbErr);
+      console.warn("Could not insert user directly into Supabase. The database schema must expose the expected columns or credentials may be unavailable:", dbErr);
     }
 
     return res.status(201).json({
