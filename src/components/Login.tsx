@@ -14,6 +14,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [rememberMe, setRememberMe] = useState(false);
+  const [selectedPortal, setSelectedPortal] = useState<'student' | 'instructor' | 'admin' | null>(null);
 
   // Password reset state
   const [showResetModal, setShowResetModal] = useState(false);
@@ -106,9 +107,10 @@ export default function Login({ onLoginSuccess }: LoginProps) {
     }
   };
 
-  const fillCredentials = (id: string, pass: string) => {
+  const fillCredentials = (id: string, pass: string, portal: 'student' | 'instructor' | 'admin') => {
     setUniversityId(id);
     setPassword(pass);
+    setSelectedPortal(portal);
     setError(null);
   };
 
@@ -157,7 +159,11 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                   type="text"
                   placeholder={t('academic_id_placeholder')}
                   value={universityId}
-                  onChange={(e) => setUniversityId(e.target.value)}
+                  onChange={(e) => {
+                    const cleanVal = e.target.value.replace(/[^a-zA-Z0-9\u0600-\u06FF]/g, '');
+                    setUniversityId(cleanVal);
+                    setSelectedPortal(null);
+                  }}
                   className={`w-full ${isRtl ? 'pr-10 pl-4' : 'pl-10 pr-4'} py-3 bg-slate-50/50 border border-slate-200/80 rounded-2xl text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-slate-800 focus:bg-white transition-all shadow-sm`}
                   id="login-university-id-input"
                 />
@@ -175,7 +181,10 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                   type={showPassword ? 'text' : 'password'}
                   placeholder={t('password_placeholder')}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setSelectedPortal(null);
+                  }}
                   className={`w-full ${isRtl ? 'pr-10 pl-10' : 'pl-10 pr-10'} py-3 bg-slate-50/50 border border-slate-200/80 rounded-2xl text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-slate-800 focus:bg-white transition-all shadow-sm`}
                   id="login-password-input"
                 />
@@ -232,22 +241,34 @@ export default function Login({ onLoginSuccess }: LoginProps) {
           <div className="grid grid-cols-3 gap-3 pt-4 border-t border-slate-100/80">
             <button
               type="button"
-              onClick={() => fillCredentials('202600001', '202600001@2026')}
-              className="py-2.5 px-2 bg-white border border-slate-200 hover:border-slate-400 rounded-2xl text-[11px] font-extrabold text-slate-600 hover:text-slate-900 transition-all text-center shadow-sm cursor-pointer"
+              onClick={() => fillCredentials('202600001', '202600001@2026', 'student')}
+              className={`py-2.5 px-2 border rounded-2xl text-[11px] font-extrabold text-center shadow-sm cursor-pointer transition-all duration-200 ${
+                selectedPortal === 'student'
+                  ? 'bg-slate-900 text-white border-slate-900 shadow-md scale-95'
+                  : 'bg-white border-slate-200 hover:border-slate-400 text-slate-600 hover:text-slate-900'
+              }`}
             >
               {language === 'ar' ? 'بوابة الطالب' : 'Student Portal'}
             </button>
             <button
               type="button"
-              onClick={() => fillCredentials('instructor', 'sara@2026')}
-              className="py-2.5 px-2 bg-white border border-slate-200 hover:border-slate-400 rounded-2xl text-[11px] font-extrabold text-slate-600 hover:text-slate-900 transition-all text-center shadow-sm cursor-pointer"
+              onClick={() => fillCredentials('instructor', 'sara@2026', 'instructor')}
+              className={`py-2.5 px-2 border rounded-2xl text-[11px] font-extrabold text-center shadow-sm cursor-pointer transition-all duration-200 ${
+                selectedPortal === 'instructor'
+                  ? 'bg-slate-900 text-white border-slate-900 shadow-md scale-95'
+                  : 'bg-white border-slate-200 hover:border-slate-400 text-slate-600 hover:text-slate-900'
+              }`}
             >
               {language === 'ar' ? 'عضو التدريس' : 'Faculty Member'}
             </button>
             <button
               type="button"
-              onClick={() => fillCredentials('admin', 'admin@2026')}
-              className="py-2.5 px-2 bg-white border border-slate-200 hover:border-slate-400 rounded-2xl text-[11px] font-extrabold text-slate-600 hover:text-slate-900 transition-all text-center shadow-sm cursor-pointer"
+              onClick={() => fillCredentials('admin', 'admin@2026', 'admin')}
+              className={`py-2.5 px-2 border rounded-2xl text-[11px] font-extrabold text-center shadow-sm cursor-pointer transition-all duration-200 ${
+                selectedPortal === 'admin'
+                  ? 'bg-slate-900 text-white border-slate-900 shadow-md scale-95'
+                  : 'bg-white border-slate-200 hover:border-slate-400 text-slate-600 hover:text-slate-900'
+              }`}
             >
               {language === 'ar' ? 'المدير العام' : 'General Manager'}
             </button>
