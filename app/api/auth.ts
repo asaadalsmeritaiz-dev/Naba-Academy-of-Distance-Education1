@@ -55,6 +55,17 @@ async function seedVirtualUsers() {
     password_hash: hashInstructor,
     is_first_login: false
   });
+
+  virtualUsersCache.set("202600001", {
+    id: "usr-1",
+    university_id: "202600001",
+    full_name: "أحمد محمد عبد الله",
+    email: "ahmed@naba.edu",
+    role: "student",
+    major: "علوم الحاسب والذكاء الاصطناعي",
+    password_hash: hashStudent,
+    is_first_login: false
+  });
 }
 
 seedVirtualUsers();

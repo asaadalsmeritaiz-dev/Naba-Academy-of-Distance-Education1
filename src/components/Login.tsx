@@ -66,6 +66,14 @@ export default function Login({ onLoginSuccess }: LoginProps) {
           university_id: 'instructor',
           email: 'sara@naba.edu'
         });
+      } else if (universityId === '202600001' && password === '202600001@2026') {
+        onLoginSuccess({
+          id: 'usr-1',
+          name: 'أحمد محمد عبد الله',
+          role: 'student',
+          university_id: '202600001',
+          email: 'ahmed@naba.edu'
+        });
       } else {
         setError(t('login_error'));
       }
