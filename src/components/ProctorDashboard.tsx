@@ -138,6 +138,39 @@ export default function ProctorDashboard({ mode = 'proctor' }: ProctorDashboardP
     };
   }, [mode]);
 
+  // Simulating live alerts for demonstration purposes (fallback)
+  useEffect(() => {
+    if (mode !== 'proctor') return;
+
+    const interval = setInterval(() => {
+      const simulatedNames = ['خالد عمر صالح', 'فاطمة علي سعيد', 'عبد الرحمن يوسف', 'سارة محمد', 'سليمان خالد'];
+      const violationTypes: Array<ProctorAlert['type']> = ['tab_switch', 'multiple_faces', 'no_face', 'audio_anomaly'];
+      const messages = [
+        'قام الطالب بالتبديل إلى نافذة أخرى في المتصفح.',
+        'تم رصد وجه إضافي في إطار الكاميرا.',
+        'وجه الطالب غير ظاهر أمام الكاميرا تماماً.',
+        'تم الكشف عن صوت مرتفع أو ضوضاء غير عادية.'
+      ];
+      const severities: Array<ProctorAlert['severity']> = ['medium', 'high', 'high', 'low'];
+
+      const randomIndex = Math.floor(Math.random() * simulatedNames.length);
+      const randomTypeIndex = Math.floor(Math.random() * violationTypes.length);
+
+      const newAlert: ProctorAlert = {
+        id: `alert-sim-${Date.now()}`,
+        studentName: simulatedNames[randomIndex],
+        type: violationTypes[randomTypeIndex],
+        severity: severities[randomTypeIndex],
+        message: messages[randomTypeIndex],
+        timestamp: new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+      };
+
+      setAlerts(prev => [newAlert, ...prev]);
+    }, 25000); // every 25 seconds
+
+    return () => clearInterval(interval);
+  }, [mode]);
+
   // Auto Quiz Generator handler using Gemini API
   const handleGenerateQuiz = async (e: React.FormEvent) => {
     e.preventDefault();

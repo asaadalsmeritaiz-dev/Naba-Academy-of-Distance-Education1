@@ -11,9 +11,11 @@ import AdminDashboard from './components/AdminDashboard';
 import Login from './components/Login';
 import ChangePasswordModal from './components/ChangePasswordModal';
 import ProfileView from './components/ProfileView';
+import InstructorCourses from './components/InstructorCourses';
+import StudentAnalytics from './components/StudentAnalytics';
 
 import { mockUsers, mockCourses, mockExams } from './data/mock';
-import { Course, User, Exam } from './types';
+import { Course, User, Exam, Lecture } from './types';
 
 export default function App() {
   const [authenticatedUser, setAuthenticatedUser] = useState<any | null>(null);
@@ -25,6 +27,22 @@ export default function App() {
   const [courses, setCourses] = useState<Course[]>(mockCourses);
   const [exams, setExams] = useState<Exam[]>(mockExams);
   const [notificationsCount, setNotificationsCount] = useState(3);
+
+  const handleAddLecture = (courseId: string, lecture: Lecture) => {
+    setCourses(prev => prev.map(course => {
+      if (course.id === courseId) {
+        return {
+          ...course,
+          lectures: [...course.lectures, lecture]
+        };
+      }
+      return course;
+    }));
+  };
+
+  const handleAddCourse = (newCourse: Course) => {
+    setCourses(prev => [...prev, newCourse]);
+  };
 
   // Auto-restore JWT session from httpOnly cookie on startup
   useEffect(() => {
@@ -207,18 +225,17 @@ export default function App() {
                   <ProctorDashboard mode="generator" />
                 )}
 
-                {(activeTab === 'courses-instructor' || activeTab === 'student-analytics') && (
-                  <div className="p-8 bg-white border border-slate-100 rounded-3xl text-center space-y-4 max-w-xl mx-auto mt-12 shadow-sm">
-                    <div className="p-3 bg-slate-100 text-slate-800 rounded-2xl w-max mx-auto">
-                      <svg className="h-8 w-8 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                      </svg>
-                    </div>
-                    <h3 className="font-extrabold text-slate-800 text-sm">ميزات التخطيط قيد المعاينة</h3>
-                    <p className="text-xs text-slate-400 font-medium leading-relaxed">
-                      تم تصميم هيكل التبويب وتنسيقه مسبقاً بما يتناسب مع معايير أكاديمية نبا. سيتم استكمال ربط قاعدة البيانات والجداول الفلكية في الفاز القادم فور توجيهكم.
-                    </p>
-                  </div>
+                {activeTab === 'courses-instructor' && (
+                  <InstructorCourses 
+                    courses={courses}
+                    onAddLecture={handleAddLecture}
+                    onAddCourse={handleAddCourse}
+                    instructorName={currentUser.name}
+                  />
+                )}
+                
+                {activeTab === 'student-analytics' && (
+                  <StudentAnalytics />
                 )}
               </>
             )}
