@@ -1,88 +1,74 @@
 // ==========================================
 // Supabase Server Client Setup (Server-Side)
-// For Next.js App Router & Server Environments (using @supabase/ssr)
+// For Express / Vite server routes
 // ==========================================
 
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 
-/**
- * Validates and retrieves Supabase credentials from the environment.
- */
+function normalizeEnvValue(value?: string) {
+  return value ? value.trim() : '';
+}
+
+function isPlaceholder(value: string) {
+  return !value || /your-supabase|placeholder|mock/i.test(value);
+}
+
 function getSupabaseCredentials() {
   const metaEnv = typeof import.meta !== 'undefined' ? (import.meta as any).env : undefined;
-  const supabaseUrl = 
-    process.env.SUPABASE_URL || 
+  const supabaseUrl = normalizeEnvValue(
+    process.env.SUPABASE_URL ||
     process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    metaEnv?.VITE_SUPABASE_URL ||
-    'https://placeholder.supabase.co';
-
-  const supabaseAnonKey = 
-    process.env.SUPABASE_ANON_KEY || 
+    metaEnv?.VITE_SUPABASE_URL
+  );
+  const supabaseAnonKey = normalizeEnvValue(
+    process.env.SUPABASE_ANON_KEY ||
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-    metaEnv?.VITE_SUPABASE_ANON_KEY ||
-    'placeholder-key';
+    metaEnv?.VITE_SUPABASE_ANON_KEY
+  );
+  const supabaseServiceRoleKey = normalizeEnvValue(
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.SUPABASE_SERVICE_ROLE ||
+    process.env.SUPABASE_SECRET_KEY
+  );
 
-  return { supabaseUrl, supabaseAnonKey };
+  const isConfigured = Boolean(
+    supabaseUrl &&
+    !isPlaceholder(supabaseUrl) &&
+    ((supabaseAnonKey && !isPlaceholder(supabaseAnonKey)) || (supabaseServiceRoleKey && !isPlaceholder(supabaseServiceRoleKey)))
+  );
+
+  return { supabaseUrl, supabaseAnonKey, supabaseServiceRoleKey, isConfigured };
+}
+
+export function getSupabaseConnectionInfo() {
+  const { supabaseUrl, isConfigured, supabaseServiceRoleKey } = getSupabaseCredentials();
+  return {
+    configured: isConfigured,
+    url: supabaseUrl || null,
+    serviceRoleConfigured: Boolean(supabaseServiceRoleKey && !isPlaceholder(supabaseServiceRoleKey)),
+  };
 }
 
 /**
- * Creates a server-compatible Supabase client for Route Handlers,
- * Server Actions, or Server Components.
+ * Creates a server-compatible Supabase client for Express routes.
+ * Prefer the service-role key when available so RLS can be bypassed.
  */
 export async function createClient(req?: any) {
-  const { supabaseUrl, supabaseAnonKey } = getSupabaseCredentials();
-  
-  let cookieStore;
-  try {
-    cookieStore = await cookies();
-  } catch (error) {
-    // Fallback for Express / non-Next.js environments
-    const authHeader = req?.headers?.authorization;
-    const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.substring(7) : undefined;
-    
-    const options: any = {};
-    if (token) {
-      options.global = {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      };
-    }
-    
-    return createServerClient(
-      supabaseUrl,
-      supabaseAnonKey,
-      {
-        ...options,
-        cookies: {
-          getAll() {
-            return [];
-          },
-          setAll() {}
-        }
+  const { supabaseUrl, supabaseAnonKey, supabaseServiceRoleKey, isConfigured } = getSupabaseCredentials();
+
+  if (!isConfigured) {
+    return new Proxy({}, {
+      get() {
+        throw new Error('Supabase is not configured. Set SUPABASE_URL and SUPABASE_ANON_KEY or SUPABASE_SERVICE_ROLE_KEY.');
       }
-    );
+    }) as any;
   }
 
-  return createServerClient(
-    supabaseUrl,
-    supabaseAnonKey,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            );
-          } catch {
-            // Can be safely ignored if middleware handles dynamic session updates.
-          }
-        },
-      },
-    }
-  );
+  const key = supabaseServiceRoleKey || supabaseAnonKey;
+  return createSupabaseClient(supabaseUrl, key, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  });
 }

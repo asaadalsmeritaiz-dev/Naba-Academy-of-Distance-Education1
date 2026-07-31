@@ -24,10 +24,13 @@ create table public.users (
   id uuid primary key references auth.users(id) on delete cascade,
   full_name text not null,
   student_id text unique,
+  university_id text unique,
   major text,
   role text not null check (role in ('student', 'instructor', 'admin')),
   avatar_url text,
   email text unique not null,
+  password_hash text,
+  is_first_login boolean default true not null,
   created_at timestamp with time zone default now() not null,
   updated_at timestamp with time zone default now() not null
 );
@@ -146,6 +149,17 @@ create table public.forum_replies (
   updated_at timestamp with time zone default now() not null
 );
 
+-- 11. password_reset_tokens Table
+create table public.password_reset_tokens (
+  id uuid primary key default gen_random_uuid(),
+  university_id text not null,
+  token text not null unique,
+  expires_at timestamp with time zone not null,
+  used boolean default false not null,
+  created_at timestamp with time zone default now() not null,
+  updated_at timestamp with time zone default now() not null
+);
+
 -- ==========================================
 -- 2. Automatic Triggers & Helpers
 -- ==========================================
@@ -170,6 +184,7 @@ create trigger set_updated_at before update on public.questions for each row exe
 create trigger set_updated_at before update on public.exam_attempts for each row execute procedure public.set_current_timestamp_updated_at();
 create trigger set_updated_at before update on public.forum_posts for each row execute procedure public.set_current_timestamp_updated_at();
 create trigger set_updated_at before update on public.forum_replies for each row execute procedure public.set_current_timestamp_updated_at();
+create trigger set_updated_at before update on public.password_reset_tokens for each row execute procedure public.set_current_timestamp_updated_at();
 
 -- Trigger to automatically create a profile in the public users table when a user signs up
 create or replace function public.handle_new_user()
@@ -206,6 +221,7 @@ alter table public.questions enable row level security;
 alter table public.exam_attempts enable row level security;
 alter table public.forum_posts enable row level security;
 alter table public.forum_replies enable row level security;
+alter table public.password_reset_tokens enable row level security;
 
 -- 3.1 public.users Policies
 create policy "Users can view their own profile" 

@@ -2,6 +2,9 @@ import express from "express";
 import path from "path";
 import dotenv from "dotenv";
 import { createServer as createViteServer } from "vite";
+
+dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
+dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 import { GoogleGenAI } from "@google/genai";
 import { createServer as createHttpServer } from "http";
 import { Server as SocketIOServer } from "socket.io";
@@ -16,6 +19,7 @@ import forumRouter from "./app/api/forum";
 import aiRouter from "./app/api/ai";
 import instructorRouter from "./app/api/instructor";
 import uploadRouter from "./app/api/upload";
+import { getSupabaseConnectionInfo } from "./lib/supabase/server";
 
 dotenv.config();
 
@@ -33,7 +37,7 @@ app.use("/api/ai", aiRouter);
 app.use("/api/instructor", instructorRouter);
 app.use("/api/upload", uploadRouter);
 
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 // Lazy initialization of Gemini client to prevent crashing if the key is missing on startup
 let ai: GoogleGenAI | null = null;
@@ -58,7 +62,21 @@ function getGeminiClient(): GoogleGenAI {
 
 // 1. Health check route
 app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", time: new Date().toISOString() });
+  const supabaseStatus = getSupabaseConnectionInfo();
+  console.log("[health] Supabase config:", {
+    configured: supabaseStatus.configured,
+    serviceRoleConfigured: supabaseStatus.serviceRoleConfigured,
+    url: supabaseStatus.url,
+  });
+  res.json({
+    status: "ok",
+    time: new Date().toISOString(),
+    supabase: {
+      configured: supabaseStatus.configured,
+      serviceRoleConfigured: supabaseStatus.serviceRoleConfigured,
+      url: supabaseStatus.url,
+    },
+  });
 });
 
 // 2. Lecture Summarization endpoint
