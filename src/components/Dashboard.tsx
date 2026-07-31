@@ -85,38 +85,29 @@ export default function Dashboard({
       {/* KPI Stats Bento Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="academic-stats-grid">
         {/* GPA CARD */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between" id="stat-card-gpa">
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm" id="stat-card-gpa">
           <div className="space-y-1">
             <span className="text-xs font-bold text-slate-400">المعدل التراكمي (GPA)</span>
             <p className="text-2xl font-black text-slate-800">٣.٨ <span className="text-xs text-slate-400">/ ٤.٠</span></p>
             <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full block w-max">مرتبة الشرف الثانية</span>
           </div>
-          <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
-            <Award className="h-6 w-6" />
-          </div>
         </div>
 
         {/* CREDIT HOURS CARD */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between" id="stat-card-hours">
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm" id="stat-card-hours">
           <div className="space-y-1">
             <span className="text-xs font-bold text-slate-400">الساعات المعتمدة الكلية</span>
             <p className="text-2xl font-black text-slate-800">٤٥ <span className="text-xs text-slate-400">ساعة مسجلة</span></p>
             <span className="text-[10px] text-slate-400 block font-medium">الخطة الأكاديمية: ١٢٠ ساعة</span>
           </div>
-          <div className="p-3 bg-slate-100 text-slate-800 rounded-xl">
-            <BookOpen className="h-6 w-6" />
-          </div>
         </div>
 
         {/* CURRENT SEMESTER CARD */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between" id="stat-card-semester">
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm" id="stat-card-semester">
           <div className="space-y-1">
             <span className="text-xs font-bold text-slate-400">الفصل الدراسي الحالي</span>
             <p className="text-lg font-black text-slate-800">خريف ٢٠٢٦</p>
             <span className="text-[10px] text-slate-800 font-bold bg-slate-100 px-2 py-0.5 rounded-full block w-max">السنة الرابعة التخصصية</span>
-          </div>
-          <div className="p-3 bg-amber-50 text-amber-600 rounded-xl">
-            <Calendar className="h-6 w-6" />
           </div>
         </div>
       </div>
